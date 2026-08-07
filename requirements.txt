@@ -1,0 +1,24 @@
+# Core scientific stack
+numpy
+pandas
+scipy
+scikit-learn
+matplotlib
+seaborn
+joblib
+
+# Gradient boosting
+xgboost
+
+# Explainability
+shap
+
+# Sentence embeddings + transformer fine-tuning
+torch
+transformers
+sentence-transformers
+
+# Real-time API deployment (latency demo)
+fastapi
+uvicorn
+pydantic
