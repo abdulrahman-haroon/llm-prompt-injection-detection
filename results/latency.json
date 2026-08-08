@@ -1,7 +1,7 @@
 {
-  "LogReg (TF-IDF)": 0.7088549999753013,
-  "Linear SVM (TF-IDF)": 1.4385673331950481,
-  "RandomForest (MiniLM)": 75.16089366651917,
-  "XGBoost (MiniLM)": 11.438284666704323,
-  "Transformer (distilbert-base-uncased)": 9.951397999927092
+  "LogReg (TF-IDF)": 1.3363346666665166,
+  "Linear SVM (TF-IDF)": 2.6763010000043628,
+  "RandomForest (MiniLM)": 77.35654800000096,
+  "XGBoost (MiniLM)": 15.418884666663265,
+  "Transformer (distilbert-base-uncased)": 23.753691999991133
 }

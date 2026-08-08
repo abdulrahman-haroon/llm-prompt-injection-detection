@@ -142,6 +142,7 @@ class TransformerClassifier:
         hf_logging.set_verbosity_error()
         self.cfg = cfg
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        torch.manual_seed(cfg.random_state)
         self.tok = AutoTokenizer.from_pretrained(cfg.transformer_model)
         self.model = AutoModelForSequenceClassification.from_pretrained(
             cfg.transformer_model, num_labels=2).to(self.device)
@@ -162,7 +163,10 @@ class TransformerClassifier:
         mask = torch.tensor(enc["attention_mask"])
         y = torch.tensor(list(labels))
         ds = TensorDataset(ids, mask, y)
-        dl = DataLoader(ds, batch_size=self.cfg.transformer_batch, shuffle=True)
+        torch.manual_seed(self.cfg.random_state)
+        gen = torch.Generator().manual_seed(self.cfg.random_state)
+        dl = DataLoader(ds, batch_size=self.cfg.transformer_batch, shuffle=True,
+                        generator=gen)
 
         # class weights for imbalance
         pos = float((np.array(labels) == 1).sum())

@@ -33,7 +33,7 @@ class Config:
     cv_folds: int = 5
     embed_model: str = "sentence-transformers/all-MiniLM-L6-v2"
     transformer_model: str = "distilbert-base-uncased"  # or microsoft/deberta-v3-base
-    transformer_sample: int = 6000     # subsample size for transformer fine-tuning
+    transformer_sample: int = 5000     # subsample size for transformer fine-tuning
     transformer_epochs: int = 2
     transformer_batch: int = 16
     transformer_max_len: int = 128
@@ -60,15 +60,6 @@ def load_datasets(cfg: Config):
         pd.read_csv(os.path.join(DATA_DIR, "ahsanayub-malicious-prompts", "test.csv")),
     ], ignore_index=True)[["text", "label"]]
     ahsan["dataset"] = "ahsan"
-
-    # stratified subsample of the large corpus
-    if cfg.ahsan_sample and len(ahsan) > cfg.ahsan_sample:
-        frac_pos = ahsan["label"].mean()
-        n_pos = int(round(cfg.ahsan_sample * frac_pos))
-        n_neg = cfg.ahsan_sample - n_pos
-        pos = ahsan[ahsan.label == 1].sample(n=n_pos, random_state=cfg.random_state)
-        neg = ahsan[ahsan.label == 0].sample(n=n_neg, random_state=cfg.random_state)
-        ahsan = pd.concat([pos, neg], ignore_index=True)
 
     # reshabhs/SPML_Chatbot_Prompt_Injection
     spml = pd.read_csv(os.path.join(DATA_DIR, "reshabhs-SPML_Chatbot_Prompt_Injection",
@@ -98,6 +89,15 @@ def load_datasets(cfg: Config):
         return df.reset_index(drop=True)
 
     ahsan, spml, deepset = _prep(ahsan), _prep(spml), _prep(deepset)
+
+    # stratified subsample of the large corpus (after cleaning/de-duplication)
+    if cfg.ahsan_sample and len(ahsan) > cfg.ahsan_sample:
+        frac_pos = ahsan["label"].mean()
+        n_pos = int(round(cfg.ahsan_sample * frac_pos))
+        n_neg = cfg.ahsan_sample - n_pos
+        pos = ahsan[ahsan.label == 1].sample(n=n_pos, random_state=cfg.random_state)
+        neg = ahsan[ahsan.label == 0].sample(n=n_neg, random_state=cfg.random_state)
+        ahsan = pd.concat([pos, neg], ignore_index=True)
 
     train_pool = pd.concat([ahsan, spml], ignore_index=True)
     # drop training rows that also appear in the external test set

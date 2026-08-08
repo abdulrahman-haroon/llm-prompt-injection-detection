@@ -308,6 +308,7 @@ sub = pd.DataFrame({"text": X_tr, "label": y_tr})
 sub, _ = train_test_split(sub, train_size=min(TF_SAMPLE, len(sub)),
                           stratify=sub["label"], random_state=RANDOM_STATE)
 
+torch.manual_seed(RANDOM_STATE)
 tok = AutoTokenizer.from_pretrained(TRANSFORMER_MODEL)
 tf_model = AutoModelForSequenceClassification.from_pretrained(TRANSFORMER_MODEL, num_labels=2).to(device)
 
